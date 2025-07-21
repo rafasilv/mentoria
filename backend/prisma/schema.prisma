@@ -1,0 +1,171 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  nome               String
+  email              String   @unique
+  senha_hash         String
+  tipo_usuario       TipoUsuario
+  timezone           String   @default("America/Sao_Paulo")
+  mentor_id          String?
+  notificacoes_ativas Boolean @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  // Relacionamentos
+  mentor             User?    @relation("MentorMentorado", fields: [mentor_id], references: [id])
+  mentorados         User[]   @relation("MentorMentorado")
+  
+  // Metas criadas pelo mentor
+  goals_created      Goal[]   @relation("MentorGoals")
+  
+  // Metas atribuídas ao mentorado
+  goals_assigned     Goal[]   @relation("MentoradoGoals")
+  
+  // Interações realizadas
+  interactions       Interaction[]
+  
+  // Notificações enviadas
+  notifications_sent NotificationSent[]
+  notifications_summary_sent NotificationSummarySent[]
+
+  @@map("users")
+}
+
+model Goal {
+  id           String   @id @default(cuid())
+  mentor_id    String
+  mentorado_id String
+  titulo       String
+  descricao    String?
+  data_limite  DateTime
+  status       StatusGoal @default(EM_ANDAMENTO)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Relacionamentos
+  mentor       User     @relation("MentorGoals", fields: [mentor_id], references: [id])
+  mentorado    User     @relation("MentoradoGoals", fields: [mentorado_id], references: [id])
+  plans        Plan[]
+
+  @@map("goals")
+}
+
+model Plan {
+  id           String   @id @default(cuid())
+  goal_id      String
+  tipo         TipoPlano
+  titulo       String
+  descricao    String?
+  data_limite  DateTime
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  // Relacionamentos
+  goal         Goal     @relation(fields: [goal_id], references: [id], onDelete: Cascade)
+  versions     PlanVersion[]
+  interactions Interaction[]
+  notifications_sent NotificationSent[]
+
+  @@map("plans")
+}
+
+model PlanVersion {
+  id                   String   @id @default(cuid())
+  plan_id              String
+  data_inicio          DateTime
+  interacoes_esperadas Int
+  dias_semana          String[] @default([])
+  horarios             String[] @default([])
+  created_at           DateTime @default(now())
+
+  // Relacionamentos
+  plan                 Plan     @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+  interactions         Interaction[]
+  notifications_sent   NotificationSent[]
+
+  @@map("plan_versions")
+}
+
+model Interaction {
+  id                String   @id @default(cuid())
+  horario_programado String?
+  plan_id           String
+  plan_version_id   String
+  mentorado_id      String
+  data_interacao    DateTime
+  status            StatusInteraction
+  justificativa     String?
+  created_at        DateTime @default(now())
+
+  // Relacionamentos
+  plan              Plan     @relation(fields: [plan_id], references: [id])
+  plan_version      PlanVersion @relation(fields: [plan_version_id], references: [id])
+  mentorado         User     @relation(fields: [mentorado_id], references: [id])
+
+  @@map("interactions")
+}
+
+model NotificationSent {
+  id              String   @id @default(cuid())
+  plan_id         String
+  plan_version_id String
+  mentorado_id    String
+  data            DateTime
+  horario         String
+  criado_em       DateTime @default(now())
+
+  // Relacionamentos
+  plan            Plan     @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+  plan_version    PlanVersion @relation(fields: [plan_version_id], references: [id])
+  mentorado       User     @relation(fields: [mentorado_id], references: [id], onDelete: Cascade)
+
+  @@unique([plan_id, mentorado_id, data, horario])
+  @@map("notifications_sent")
+}
+
+model NotificationSummarySent {
+  id           String   @id @default(cuid())
+  mentorado_id String
+  data         DateTime
+  criado_em    DateTime @default(now())
+
+  // Relacionamentos
+  mentorado    User     @relation(fields: [mentorado_id], references: [id], onDelete: Cascade)
+
+  @@unique([mentorado_id, data])
+  @@map("notifications_summary_sent")
+}
+
+enum TipoUsuario {
+  MENTOR
+  MENTORADO
+}
+
+enum StatusGoal {
+  EM_ANDAMENTO
+  EM_ATRASO
+  SUSPENSA
+  ATINGIDA
+  EXCLUIDA
+}
+
+enum TipoPlano {
+  UNICA
+  MULTIPLA
+}
+
+enum StatusInteraction {
+  REALIZADO
+  NAO_REALIZADO
+} 

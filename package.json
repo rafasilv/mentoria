@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@tamagui/animations-react-native": "^1.132.10",
+    "@tamagui/config": "^1.132.10",
+    "@tamagui/core": "^1.132.10",
+    "@tamagui/font-inter": "^1.132.10",
+    "@tamagui/shorthands": "^1.132.10",
+    "@tamagui/theme-base": "^1.132.10",
+    "nativewind": "^4.1.23"
+  }
+}
