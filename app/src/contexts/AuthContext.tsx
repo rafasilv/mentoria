@@ -17,9 +17,8 @@ interface AuthContextData {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  handleLogout: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  checkBiometric: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -93,19 +92,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signOut = async () => {
+  const handleLogout = async () => {
     try {
-      if (token) {
-        await api.post('/auth/logout');
-      }
-    } catch (error) {
-      console.error('Erro no logout:', error);
-    } finally {
-      setUser(null);
-      setToken(null);
-      delete api.defaults.headers.authorization;
       await storage.deleteItem('token');
       await storage.deleteItem('user');
+      setToken(null);
+      setUser(null);
+      api.defaults.headers.authorization = null;
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
     }
   };
 
@@ -131,14 +126,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      token,
-      isLoading,
-      signIn,
-      signOut,
-      checkBiometric
-    }}>
+    <AuthContext.Provider value={{ user, token, isLoading, handleLogout, signIn }}>
       {children}
     </AuthContext.Provider>
   );
