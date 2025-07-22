@@ -12,7 +12,7 @@ const ExampleScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView 
-        style={{ flex: 1 }}
+        style={{ backgroundColor: 'white', flex: 1 }}
         contentContainerStyle={{ paddingBottom: 20 }}
         className="force-scroll"
       >

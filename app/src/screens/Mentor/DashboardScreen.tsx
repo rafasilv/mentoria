@@ -48,68 +48,67 @@ const MentorDashboardScreen = () => {
     status === 'atraso' ? 'text-red-700' : 'text-orange-700';
 
   return (
-    <MentorLayout activeTab="dashboard">
-      <ScrollView 
-        contentContainerStyle={{ paddingBottom: 20 }}
-        className="force-scroll"
-      >
-        {/* Metas para Análise */}
-        <View className="px-6 py-6">
-          {/* Título removido */}
-          <View className="space-y-4">
-            {metasOrdenadas.map((meta, index) => (
-              <View key={index} className={`${getCardBgColor(meta.status)} p-4 rounded-xl border ${getCardBorderColor(meta.status)} shadow-sm`}>
-                <View className="flex-row items-start justify-between mb-3">
-                  <View className="flex-row items-center flex-1">
-                    <Icon 
-                      name="flag" 
-                      size={24} 
-                      color={meta.status === 'atraso' ? '#dc2626' : '#ea580c'} 
-                      style={{ marginRight: 12 }}
-                    />
-                    <View className="flex-1">
-                      <Text className={`text-lg font-medium mb-1 ${meta.status === 'atraso' ? 'text-red-700' : 'text-orange-700'}`}>
-                        {meta.titulo}
-                      </Text>
-                      <Text className="text-slate-600 font-medium">
-                        {meta.mentorado}
-                      </Text>
-                    </View>
-                  </View>
-                  <View className={`px-3 py-1 rounded-full ${getStatusBgColor(meta.status)}`}>
-                    <Text className={`text-xs font-medium ${getStatusTextColor(meta.status)}`}>
-                      Meta
+    <ScrollView 
+      style={{ backgroundColor: 'white', flex: 1 }}
+      contentContainerStyle={{ paddingBottom: 20 }}
+      className="force-scroll"
+    >
+      {/* Metas para Análise */}
+      <View className="px-6 py-6">
+        {/* Título removido */}
+        <View className="space-y-4">
+          {metasOrdenadas.map((meta, index) => (
+            <View key={index} className={`${getCardBgColor(meta.status)} p-4 rounded-xl border ${getCardBorderColor(meta.status)} shadow-sm`}>
+              <View className="flex-row items-start justify-between mb-3">
+                <View className="flex-row items-center flex-1">
+                  <Icon 
+                    name="flag" 
+                    size={24} 
+                    color={meta.status === 'atraso' ? '#dc2626' : '#ea580c'} 
+                    style={{ marginRight: 12 }}
+                  />
+                  <View className="flex-1">
+                    <Text className={`text-lg font-medium mb-1 ${meta.status === 'atraso' ? 'text-red-700' : 'text-orange-700'}`}>
+                      {meta.titulo}
+                    </Text>
+                    <Text className="text-slate-600 font-medium">
+                      {meta.mentorado}
                     </Text>
                   </View>
                 </View>
+                <View className={`px-3 py-1 rounded-full ${getStatusBgColor(meta.status)}`}>
+                  <Text className={`text-xs font-medium ${getStatusTextColor(meta.status)}`}>
+                    Meta
+                  </Text>
+                </View>
+              </View>
 
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-row items-center">
-                    <Icon 
-                      name="schedule" 
-                      size={16} 
-                      color={meta.status === 'atraso' ? '#dc2626' : '#ea580c'} 
-                    />
-                    <Text className={`text-sm font-medium ml-2 ${meta.status === 'atraso' ? 'text-red-600' : 'text-orange-600'}`}>
-                      {meta.status === 'atraso' ? `${meta.diasAtraso} dia${meta.diasAtraso > 1 ? 's' : ''} em atraso` : 'Vence hoje'}
-                    </Text>
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center">
+                  <Icon 
+                    name="schedule" 
+                    size={16} 
+                    color={meta.status === 'atraso' ? '#dc2626' : '#ea580c'} 
+                  />
+                  <Text className={`text-sm font-medium ml-2 ${meta.status === 'atraso' ? 'text-red-600' : 'text-orange-600'}`}>
+                    {meta.status === 'atraso' ? `${meta.diasAtraso} dia${meta.diasAtraso > 1 ? 's' : ''} em atraso` : 'Vence hoje'}
+                  </Text>
+                </View>
+                
+                <View className="flex-row space-x-2">
+                  <View className="p-2 bg-white rounded-full shadow-sm">
+                    <Icon name="chat" size={16} color="#64748b" />
                   </View>
-                  
-                  <View className="flex-row space-x-2">
-                    <View className="p-2 bg-white rounded-full shadow-sm">
-                      <Icon name="chat" size={16} color="#64748b" />
-                    </View>
-                    <View className="p-2 bg-white rounded-full shadow-sm">
-                      <Icon name="visibility" size={16} color="#64748b" />
-                    </View>
+                  <View className="p-2 bg-white rounded-full shadow-sm">
+                    <Icon name="visibility" size={16} color="#64748b" />
                   </View>
                 </View>
               </View>
-            ))}
-          </View>
+            </View>
+          ))}
         </View>
-      </ScrollView>
-    </MentorLayout>
+      </View>
+    </ScrollView>
   );
 };
 

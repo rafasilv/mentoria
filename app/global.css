@@ -51,6 +51,7 @@ html, body {
     margin-bottom: 60px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    background: white; /* <-- Adicionado para garantir fundo branco */
   }
 
   .layout-footer {

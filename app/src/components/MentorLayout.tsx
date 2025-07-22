@@ -13,6 +13,7 @@ interface MentorLayoutProps {
   onProfile?: () => void;
   onChangePassword?: () => void;
   headerColor?: string;
+  hideFooter?: boolean; // <-- Adicionado
 }
 
 const MentorLayout: React.FC<MentorLayoutProps> = ({
@@ -23,6 +24,7 @@ const MentorLayout: React.FC<MentorLayoutProps> = ({
   onProfile,
   onChangePassword,
   headerColor = '#ecfeff', // padrão bg-cyan-50
+  hideFooter = false, // <-- Adicionado valor padrão
 }) => {
   const { handleLogout } = useAuth();
   const insets = useSafeAreaInsets();
@@ -59,12 +61,17 @@ const MentorLayout: React.FC<MentorLayoutProps> = ({
           className={contentClass}
           style={{
             flex: 1,
-            paddingBottom: Platform.OS === 'web' ? tabBarWebHeight : 0,
+            paddingBottom: !hideFooter && Platform.OS === 'web' ? tabBarWebHeight : 0,
             marginBottom: 0,
+            backgroundColor: 'white',
           }}
         >
           {children}
         </View>
+        {/* Footer */}
+        {!hideFooter && (
+          <View style={{ height: tabBarWebHeight, backgroundColor: '#ecfeff' }} />
+        )}
       </View>
     </>
   );

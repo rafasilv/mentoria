@@ -18,6 +18,7 @@ const MentoradoDashboardScreen = () => {
   return (
     <Layout>
       <ScrollView 
+        style={{ backgroundColor: 'white', flex: 1 }}
         contentContainerStyle={{ paddingBottom: 20 }}
         className="force-scroll"
       >
