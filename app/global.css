@@ -62,6 +62,16 @@ html, body {
   }
 }
 
+/* Dropdown com z-index máximo */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-dropdown > div[style*="zIndex"] {
+  z-index: 99999 !important;
+  position: absolute !important;
+}
+
 /* Correções específicas para React Native Web */
 /* FORÇAR scroll nos ScrollViews de forma mais agressiva */
 [data-focusable="true"] {

@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../contexts/AuthContext';
 import AuthStack from './AuthStack';
-import MentorStack from './MentorStack';
+import MentorTabs from './MentorTabs';
 import MentoradoStack from './MentoradoStack';
 import LoadingScreen from '../screens/LoadingScreen';
 
@@ -20,7 +20,7 @@ const AppNavigator = () => {
       {!user ? (
         <Stack.Screen name="Auth" component={AuthStack} />
       ) : user.tipo_usuario === 'MENTOR' ? (
-        <Stack.Screen name="Mentor" component={MentorStack} />
+        <Stack.Screen name="Mentor" component={MentorTabs} />
       ) : (
         <Stack.Screen name="Mentorado" component={MentoradoStack} />
       )}
