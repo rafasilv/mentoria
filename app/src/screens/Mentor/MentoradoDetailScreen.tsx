@@ -5,6 +5,7 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import NovaMetaForm from './NovaMetaForm';
 import MentoradoMetasStack from './MentoradoMetasStack';
+import SectionDropdown from '../../components/SectionDropdown';
 
 // Mock para metas com dataConclusao
 const metasMock = [
@@ -60,9 +61,19 @@ const MentoradoDetailScreen = () => {
   const [metas, setMetas] = useState(metasMock);
   const [modalVisible, setModalVisible] = useState(false);
   const [novaMeta, setNovaMeta] = useState({ titulo: '', descricao: '' });
-  const [tab, setTab] = useState<'info' | 'planosMetas'>('info');
+  const [activeSection, setActiveSection] = useState('info');
   const { width } = useWindowDimensions();
   const [metaSelecionada, setMetaSelecionada] = useState<any>(null);
+
+  // Definição das seções disponíveis
+  const sections = [
+    { key: 'info', label: 'Informações', icon: 'person' },
+    { key: 'planosMetas', label: 'Planos e Metas', icon: 'flag' },
+    { key: 'historico', label: 'Histórico', icon: 'history' },
+    { key: 'avaliacoes', label: 'Avaliações', icon: 'star' },
+    { key: 'documentos', label: 'Documentos', icon: 'description' },
+    { key: 'relatorios', label: 'Relatórios', icon: 'assessment' },
+  ];
 
   // Mock para outros detalhes e performance
   const [outrosDetalhes, setOutrosDetalhes] = useState('Mentorado dedicado, participa ativamente das reuniões.');
@@ -91,7 +102,7 @@ const MentoradoDetailScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={{ backgroundColor: 'white', flex: 1 }} className="flex-1">
+      <ScrollView style={{ backgroundColor: 'white', flex: 1, zIndex: 1 }} className="flex-1">
         {/* Header com botão de voltar e nome do mentorado */}
         <View className="px-6 pt-8 pb-2 flex-row items-center">
           <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3 p-2">
@@ -100,27 +111,18 @@ const MentoradoDetailScreen = () => {
           <Text className="text-xl font-bold text-slate-900">{mentorado.nome}</Text>
         </View>
 
-        {/* Abas */}
-        <View className="flex-row px-6 mb-4 mt-2">
-          <Pressable onPress={() => setTab('info')} className={`flex-1 items-center py-2 rounded-xl ${tab === 'info' ? 'bg-teal-100' : ''}`}>
-            <Text className={`font-medium ${tab === 'info' ? 'text-teal-700' : 'text-slate-600'}`}>Informações</Text>
-          </Pressable>
-          <Pressable onPress={() => setTab('planosMetas')} className={`flex-1 items-center py-2 rounded-xl ${tab === 'planosMetas' ? 'bg-teal-100' : ''}`}>
-            <Text className={`font-medium ${tab === 'planosMetas' ? 'text-teal-700' : 'text-slate-600'}`}>Metas em andamento</Text>
-          </Pressable>
-          <Pressable onPress={() => setTab('planosMetas')} className={`flex-1 items-center py-2 rounded-xl ${tab === 'planosMetas' ? 'bg-teal-100' : ''}`}>
-            <Text className={`font-medium ${tab === 'planosMetas' ? 'text-teal-700' : 'text-slate-600'}`}>Metas em andamento</Text>
-          </Pressable>
-          <Pressable onPress={() => setTab('planosMetas')} className={`flex-1 items-center py-2 rounded-xl ${tab === 'planosMetas' ? 'bg-teal-100' : ''}`}>
-            <Text className={`font-medium ${tab === 'planosMetas' ? 'text-teal-700' : 'text-slate-600'}`}>Metas em andamento</Text>
-          </Pressable>
-          <Pressable onPress={() => setTab('planosMetas')} className={`flex-1 items-center py-2 rounded-xl ${tab === 'planosMetas' ? 'bg-teal-100' : ''}`}>
-            <Text className={`font-medium ${tab === 'planosMetas' ? 'text-teal-700' : 'text-slate-600'}`}>Metas em andamento</Text>
-          </Pressable>
+        {/* Seletor de seções */}
+        <View className="px-6 mb-4 mt-2" style={{ zIndex: 9999 }}>
+          <SectionDropdown
+            sections={sections}
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+            placeholder="Selecionar seção"
+          />
         </View>
 
-        {/* Conteúdo das abas */}
-        {tab === 'info' && (
+        {/* Conteúdo das seções */}
+        {activeSection === 'info' && (
           <View className="px-6 pt-2 pb-4">
             <View className="items-center mb-4">
               <View className="w-20 h-20 bg-teal-100 rounded-full items-center justify-center mb-3">
@@ -228,9 +230,45 @@ const MentoradoDetailScreen = () => {
             </View>
           </View>
         )}
-        {tab === 'planosMetas' && (
+        {activeSection === 'planosMetas' && (
           <View style={{ flex: 1, minHeight: 300 }}>
             <MentoradoMetasStack route={{ params: { mentorado, metas } }} />
+          </View>
+        )}
+
+        {activeSection === 'historico' && (
+          <View className="px-6 pt-2 pb-4">
+            <View className="bg-white rounded-xl p-6 border border-gray-100">
+              <Text className="text-lg font-semibold text-slate-900 mb-4">Histórico de Interações</Text>
+              <Text className="text-slate-600">Aqui será exibido o histórico completo de interações e atividades do mentorado.</Text>
+            </View>
+          </View>
+        )}
+
+        {activeSection === 'avaliacoes' && (
+          <View className="px-6 pt-2 pb-4">
+            <View className="bg-white rounded-xl p-6 border border-gray-100">
+              <Text className="text-lg font-semibold text-slate-900 mb-4">Avaliações</Text>
+              <Text className="text-slate-600">Aqui serão exibidas as avaliações e feedback do mentorado.</Text>
+            </View>
+          </View>
+        )}
+
+        {activeSection === 'documentos' && (
+          <View className="px-6 pt-2 pb-4">
+            <View className="bg-white rounded-xl p-6 border border-gray-100">
+              <Text className="text-lg font-semibold text-slate-900 mb-4">Documentos</Text>
+              <Text className="text-slate-600">Aqui serão exibidos os documentos e arquivos relacionados ao mentorado.</Text>
+            </View>
+          </View>
+        )}
+
+        {activeSection === 'relatorios' && (
+          <View className="px-6 pt-2 pb-4">
+            <View className="bg-white rounded-xl p-6 border border-gray-100">
+              <Text className="text-lg font-semibold text-slate-900 mb-4">Relatórios</Text>
+              <Text className="text-slate-600">Aqui serão exibidos os relatórios de progresso e performance do mentorado.</Text>
+            </View>
           </View>
         )}
       </ScrollView>
