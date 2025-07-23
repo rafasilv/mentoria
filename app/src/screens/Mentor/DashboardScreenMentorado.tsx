@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
 import Layout from '../../components/Layout';
 
-const MentoradoDashboardScreen = () => {
+const DashboardScreenMentorado = () => {
   const stats = [
     { label: 'Metas', value: '5' },
     { label: 'Concluídas', value: '3' },
@@ -67,4 +67,4 @@ const MentoradoDashboardScreen = () => {
   );
 };
 
-export default MentoradoDashboardScreen; 
+export default DashboardScreenMentorado; 

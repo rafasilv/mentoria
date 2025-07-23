@@ -47,7 +47,7 @@ html, body {
 
   .layout-content {
     flex: 1;
-    margin-top: 72px;
+    margin-top: 26px;
     margin-bottom: 60px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;

@@ -2,9 +2,28 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MentorLayout from '../../components/MentorLayout';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+// Definir tipo para mentorado
+interface Mentorado {
+  id: number;
+  nome: string;
+  email: string;
+  status: string;
+  avatar: string;
+  curso: string;
+  periodo: string;
+}
+
+type MentorStackParamList = {
+  Mentorados: undefined;
+  MentoradoDetail: { mentorado: Mentorado };
+};
 
 const MentoradosScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigation = useNavigation<StackNavigationProp<MentorStackParamList>>();
 
   const mentorados = [
     {
@@ -77,6 +96,7 @@ const MentoradosScreen = () => {
           <TouchableOpacity
             key={mentorado.id}
             className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex-row items-center"
+            onPress={() => navigation.navigate('MentoradoDetail', { mentorado })}
           >
             <View className="w-14 h-14 bg-teal-100 rounded-full items-center justify-center mr-4">
               <Text className="text-2xl">{mentorado.avatar}</Text>

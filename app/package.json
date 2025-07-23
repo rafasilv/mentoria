@@ -10,17 +10,21 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
+    "@react-native-community/datetimepicker": "^8.4.2",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.4.1",
     "axios": "^1.6.2",
+    "date-fns": "^4.1.0",
     "expo": "~53.0.0",
     "expo-local-authentication": "~16.0.5",
     "expo-secure-store": "~14.2.3",
     "expo-status-bar": "~2.2.3",
+    "expo-system-ui": "~5.0.10",
     "moment-timezone": "^0.5.43",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
+    "react-datepicker": "^8.4.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.48.2",
     "react-native": "0.79.5",
@@ -32,8 +36,7 @@
     "react-native-svg": "15.11.2",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "^0.20.0",
-    "zustand": "^4.4.7",
-    "expo-system-ui": "~5.0.10"
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

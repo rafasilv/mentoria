@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MentorDashboardScreen from '../screens/Mentor/DashboardScreen';
-import MentoradosScreen from '../screens/Mentor/MentoradosScreen';
+import MentoradosStack from '../navigation/MentoradosStack';
 import EstatisticasScreen from '../screens/Mentor/EstatisticasScreen';
 import { View, Text, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -86,7 +86,7 @@ const MentorTabs = () => {
       >
         <Tab.Screen name="To-do" component={MentorDashboardScreen} />
         <Tab.Screen name="Agenda" component={AgendaScreen} />
-        <Tab.Screen name="Mentorados" component={MentoradosScreen} />
+        <Tab.Screen name="Mentorados" component={MentoradosStack} />
         <Tab.Screen name="Estatísticas" component={EstatisticasScreen} />
       </Tab.Navigator>
     </MentorLayout>

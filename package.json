@@ -7,5 +7,8 @@
     "@tamagui/shorthands": "^1.132.10",
     "@tamagui/theme-base": "^1.132.10",
     "nativewind": "^4.1.23"
+  },
+  "devDependencies": {
+    "@types/react-dom": "^19.1.6"
   }
 }
