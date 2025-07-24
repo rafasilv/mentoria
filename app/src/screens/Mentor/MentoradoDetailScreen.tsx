@@ -137,9 +137,12 @@ const MentoradoDetailScreen = () => {
               </View>
               <Text className="text-2xl font-bold text-slate-900 mb-1">{mentorado.nome}</Text>
               <Text className="text-base text-slate-600 mb-1">{mentorado.email}</Text>
-              <Text className="text-sm text-slate-500 mb-1">
-                Formação: {mentorado.periodo.includes('Médico') ? 'Médico' : 'Estudante de Medicina'}
-              </Text>
+              <View className="flex-row items-center mb-1">
+                <Text className="text-sm text-slate-500 mr-2">Status:</Text>
+                <View className={`px-2 py-1 rounded-full ${mentorado.status === 'ativo' ? 'bg-green-100' : 'bg-orange-100'}`}> 
+                  <Text className={`text-xs font-medium ${mentorado.status === 'ativo' ? 'text-green-600' : 'text-orange-600'}`}>{mentorado.status === 'ativo' ? 'Ativo' : 'Inativo'}</Text>
+                </View>
+              </View>
             </View>
             {/* Removido outros detalhes e curso/periodo */}
             <View className="mb-2">

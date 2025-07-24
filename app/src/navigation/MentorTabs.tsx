@@ -7,6 +7,7 @@ import EstatisticasScreen from '../screens/Mentor/EstatisticasScreen';
 import { View, Text, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MentorLayout from '../components/MentorLayout';
+import { useNavigation } from '@react-navigation/native';
 
 // Tela de exemplo para Agenda
 const AgendaScreen = () => (
@@ -20,8 +21,14 @@ const Tab = createBottomTabNavigator();
 
 const MentorTabs = () => {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+
+  const handleProfile = () => {
+    navigation.navigate('PerfilMentor');
+  };
+
   return (
-    <MentorLayout hideFooter>
+    <MentorLayout hideFooter onProfile={handleProfile}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
