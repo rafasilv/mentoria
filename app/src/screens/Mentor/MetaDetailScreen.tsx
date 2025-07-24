@@ -27,8 +27,9 @@ interface Meta {
   dataConclusao: Date;
 }
 
-interface MetaDetailParams {
+interface MetaDetailScreenProps {
   meta: Meta;
+  onBack: () => void;
 }
 
 const diasSemana = [
@@ -304,17 +305,21 @@ const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plan
   );
 };
 
-const MetaDetailScreen = () => {
-  const route = useRoute<RouteProp<Record<string, MetaDetailParams>, string>>();
-  const navigation = useNavigation();
-  const meta = (route.params as MetaDetailParams)?.meta;
+interface MetaDetailScreenProps {
+  meta: Meta;
+  onBack: () => void;
+}
+
+const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack }) => {
   const [planos, setPlanos] = useState<Plano[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [novoPlano, setNovoPlano] = useState({ nome: '', descricao: '', data: new Date() });
   const { width } = useWindowDimensions();
+  // Estado para mostrar o formulário de novo plano
   const [showPlanoForm, setShowPlanoForm] = useState(false);
   const [editandoPlano, setEditandoPlano] = useState<Plano | null>(null);
 
+  // Função para adicionar novo plano
   const adicionarPlano = () => {
     if (!novoPlano.nome.trim()) return;
     setPlanos([
@@ -322,16 +327,10 @@ const MetaDetailScreen = () => {
       { id: Date.now(), ...novoPlano },
     ]);
     setNovoPlano({ nome: '', descricao: '', data: new Date() });
-    setShowForm(false);
+    setShowPlanoForm(false);
   };
 
-  if (!meta) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <Text>Meta não encontrada.</Text>
-      </View>
-    );
-  }
+  if (!meta) return null;
 
   return (
     <View className="flex-1" style={{ backgroundColor: 'white', minHeight: '100%' }}>
@@ -341,7 +340,7 @@ const MetaDetailScreen = () => {
       >
         {/* Header com botão de voltar */}
         <View className="px-6 pt-8 pb-2 flex-row items-center">
-          <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3 p-2">
+          <TouchableOpacity onPress={onBack} className="mr-3 p-2">
             <Icon name="arrow-back" size={24} color="#0f766e" />
           </TouchableOpacity>
           <Text className="text-xl font-bold text-slate-900">Detalhe da Meta</Text>
@@ -435,6 +434,38 @@ const MetaDetailScreen = () => {
           <Icon name="add" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
+      {/* Modal para novo plano */}
+      {showPlanoForm && (
+        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
+          <View className="bg-white p-6 rounded-xl w-11/12 max-w-md">
+            <Text className="text-lg font-semibold mb-3">Novo Plano</Text>
+            <TextInput
+              className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
+              placeholder="Nome do plano"
+              value={novoPlano.nome}
+              onChangeText={text => setNovoPlano({ ...novoPlano, nome: text })}
+            />
+            <TextInput
+              className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
+              placeholder="Descrição do plano"
+              value={novoPlano.descricao}
+              onChangeText={text => setNovoPlano({ ...novoPlano, descricao: text })}
+              multiline
+            />
+            <TouchableOpacity onPress={() => {}} className="border border-gray-200 rounded-lg px-3 py-2 mb-4">
+              <Text className="text-slate-700">{novoPlano.data.toLocaleDateString('pt-BR')}</Text>
+            </TouchableOpacity>
+            <View className="flex-row justify-end space-x-2 mt-2">
+              <TouchableOpacity onPress={() => setShowPlanoForm(false)} className="px-4 py-2 rounded-lg bg-gray-200">
+                <Text>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={adicionarPlano} className="px-4 py-2 rounded-lg bg-teal-500" disabled={!novoPlano.nome.trim()}>
+                <Text className="text-white">Salvar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
       {/* Overlay/modal permanece fora do ScrollView */}
       {(showPlanoForm || editandoPlano) && (
         <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">

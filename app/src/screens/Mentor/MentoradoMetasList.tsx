@@ -5,7 +5,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import NovaMetaForm from './NovaMetaForm';
 
-interface Meta {
+export interface Meta {
   id: number;
   titulo: string;
   descricao: string;
@@ -30,23 +30,33 @@ type StackParamList = {
   MetaDetail: { meta: Meta; mentorado: Mentorado };
 };
 
-const MentoradoMetasList = () => {
-  const navigation = useNavigation<StackNavigationProp<StackParamList>>();
-  const route = useRoute<RouteProp<StackParamList, 'MentoradoMetasList'>>();
-  const { mentorado, metas: metasProp } = route.params || {};
-  const [metas, setMetas] = useState<Meta[]>(metasProp || [
-    { id: 1, titulo: 'Estudar para prova de Anatomia', descricao: 'Revisar capítulos 1 a 5 até dia 10/06.', dataConclusao: new Date() },
-    { id: 2, titulo: 'Participar de grupo de estudos', descricao: 'Entrar no grupo de estudos de Clínica Médica.', dataConclusao: new Date() },
-  ]);
-  const [modalVisible, setModalVisible] = useState(false);
+interface MentoradoMetasListProps {
+  mentorado: Mentorado;
+  metas: Meta[];
+  onMetaPress?: (meta: Meta) => void;
+}
 
-  const adicionarMeta = (meta: { titulo: string; descricao: string; dataConclusao: Date }) => {
-    setMetas([
-      ...metas,
-      { id: Date.now(), ...meta },
-    ]);
-    setModalVisible(false);
-  };
+const MentoradoMetasList: React.FC<MentoradoMetasListProps> = ({ mentorado, metas, onMetaPress }) => {
+  const navigation = useNavigation<StackNavigationProp<StackParamList>>();
+  // Remover useRoute
+  // const route = useRoute<RouteProp<StackParamList, 'MentoradoMetasList'>>();
+  // const { mentorado, metas: metasProp } = route.params || {};
+  // Remover o useState das metas
+  // const [metas, setMetas] = useState<Meta[]>(metasProp || [
+  //   { id: 1, titulo: 'Estudar para prova de Anatomia', descricao: 'Revisar capítulos 1 a 5 até dia 10/06.', dataConclusao: new Date() },
+  //   { id: 2, titulo: 'Participar de grupo de estudos', descricao: 'Entrar no grupo de estudos de Clínica Médica.', dataConclusao: new Date() },
+  // ]);
+  // Remover o useState de modalVisible
+  // const [modalVisible, setModalVisible] = useState(false);
+
+  // Remover a função adicionarMeta
+  // const adicionarMeta = (meta: { titulo: string; descricao: string; dataConclusao: Date }) => {
+  //   setMetas([
+  //     ...metas,
+  //     { id: Date.now(), ...meta },
+  //   ]);
+  //   setModalVisible(false);
+  // };
 
   return (
     <View className="flex-1" style={{ backgroundColor: 'white', minHeight: '100%' }}>
@@ -72,7 +82,7 @@ const MentoradoMetasList = () => {
             <TouchableOpacity
               key={meta.id}
               activeOpacity={0.85}
-              onPress={() => navigation.navigate('MetaDetail', { meta, mentorado })}
+              onPress={() => onMetaPress ? onMetaPress(meta) : null}
             >
               <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100" style={{ position: 'relative', paddingRight: 90 }}>
                 {data && (
@@ -104,45 +114,6 @@ const MentoradoMetasList = () => {
           );
         })}
       </ScrollView>
-      {/* Botão flutuante Nova Meta */}
-      <View
-        pointerEvents="box-none"
-        style={{
-          position: 'absolute',
-          right: 24,
-          bottom: 32,
-          zIndex: 20,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={{
-            backgroundColor: '#14b8a6',
-            borderRadius: 32,
-            padding: 16,
-            elevation: 4,
-            shadowColor: '#000',
-            shadowOpacity: 0.12,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 2 },
-          }}
-          className="items-center justify-center"
-        >
-          <Icon name="add" size={28} color="#fff" />
-        </TouchableOpacity>
-      </View>
-      {/* Overlay do formulário de nova meta */}
-      {modalVisible && (
-        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
-          <View className="bg-white p-6 rounded-xl w-11/12 max-w-md">
-            <Text className="text-lg font-semibold mb-3">Nova Meta</Text>
-            <NovaMetaForm
-              onSalvar={adicionarMeta}
-              onCancelar={() => setModalVisible(false)}
-            />
-          </View>
-        </View>
-      )}
     </View>
   );
 };

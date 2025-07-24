@@ -4,8 +4,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import NovaMetaForm from './NovaMetaForm';
-import MentoradoMetasStack from './MentoradoMetasStack';
+import MentoradoMetasList, { Meta } from './MentoradoMetasList';
 import SectionDropdown from '../../components/SectionDropdown';
+import MetaDetailScreen from './MetaDetailScreen';
 
 // Mock para metas com dataConclusao
 const metasMock = [
@@ -63,7 +64,7 @@ const MentoradoDetailScreen = () => {
   const [novaMeta, setNovaMeta] = useState({ titulo: '', descricao: '' });
   const [activeSection, setActiveSection] = useState('info');
   const { width } = useWindowDimensions();
-  const [metaSelecionada, setMetaSelecionada] = useState<any>(null);
+  const [metaSelecionada, setMetaSelecionada] = useState<Meta | null>(null);
 
   // Definição das seções disponíveis
   const sections = [
@@ -101,7 +102,7 @@ const MentoradoDetailScreen = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, position: 'relative' }}>
       <ScrollView style={{ backgroundColor: 'white', flex: 1, zIndex: 1 }} className="flex-1">
         {/* Header com botão de voltar e nome do mentorado */}
         <View className="px-6 pt-8 pb-2 flex-row items-center">
@@ -231,9 +232,13 @@ const MentoradoDetailScreen = () => {
           </View>
         )}
         {activeSection === 'planosMetas' && (
-          <View style={{ flex: 1 }}>
-            <MentoradoMetasStack route={{ params: { mentorado, metas } }} />
-          </View>
+          metaSelecionada ? (
+            <View style={{ flex: 1 }}>
+              <MetaDetailScreen meta={metaSelecionada} onBack={() => setMetaSelecionada(null)} />
+            </View>
+          ) : (
+            <MentoradoMetasList mentorado={mentorado} metas={metas} onMetaPress={setMetaSelecionada} />
+          )
         )}
 
         {activeSection === 'historico' && (
@@ -272,17 +277,47 @@ const MentoradoDetailScreen = () => {
           </View>
         )}
       </ScrollView>
-      {/* Overlay customizado para adicionar nova meta */}
-      {modalVisible && (
-        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 10 }} className="flex-1 justify-center items-center bg-black/30">
-          <View className="bg-white p-6 rounded-xl w-11/12 max-w-md">
-            <Text className="text-lg font-semibold mb-3">Nova Meta</Text>
-            <NovaMetaForm
-              onSalvar={adicionarMeta}
-              onCancelar={() => setModalVisible(false)}
-            />
+      {/* Botão flutuante e modal fora do ScrollView, só aparecem na seção de metas */}
+      {activeSection === 'planosMetas' && !metaSelecionada && (
+        <>
+          <View
+            pointerEvents="box-none"
+            style={{
+              position: 'absolute',
+              right: 24,
+              bottom: 32,
+              zIndex: 20,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              style={{
+                backgroundColor: '#14b8a6',
+                borderRadius: 32,
+                padding: 16,
+                elevation: 4,
+                shadowColor: '#000',
+                shadowOpacity: 0.12,
+                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 2 },
+              }}
+              className="items-center justify-center"
+            >
+              <Icon name="add" size={28} color="#fff" />
+            </TouchableOpacity>
           </View>
-        </View>
+          {modalVisible && (
+            <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
+              <View className="bg-white p-6 rounded-xl w-11/12 max-w-md">
+                <Text className="text-lg font-semibold mb-3">Nova Meta</Text>
+                <NovaMetaForm
+                  onSalvar={adicionarMeta}
+                  onCancelar={() => setModalVisible(false)}
+                />
+              </View>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
