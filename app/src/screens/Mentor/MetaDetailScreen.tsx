@@ -8,7 +8,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Picker } from '@react-native-picker/picker';
 
-interface Plano {
+export interface Plano {
   id: number;
   nome: string;
   descricao: string;
@@ -31,6 +31,8 @@ interface Meta {
 interface MetaDetailScreenProps {
   meta: Meta;
   onBack: () => void;
+  planos: Plano[];
+  onEditPlano?: (plano: Plano) => void;
 }
 
 const diasSemana = [
@@ -46,7 +48,7 @@ const diasSemana = [
 const horasValidas = Array.from({ length: 24 }, (_, i) => i);
 const minutosValidos = [0, 15, 30, 45];
 
-const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plano: any) => void; onCancelar: () => void; onExcluir?: () => void; plano?: Plano }) => {
+export const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plano: any) => void; onCancelar: () => void; onExcluir?: () => void; plano?: Plano }) => {
   const [nome, setNome] = useState(plano?.nome || '');
   const [tipo, setTipo] = useState<'unica' | 'multipla'>('unica');
   const [frequencia, setFrequencia] = useState<'semanal' | 'quinzenal' | 'mensal'>('semanal');
@@ -309,34 +311,20 @@ const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plan
 interface MetaDetailScreenProps {
   meta: Meta;
   onBack: () => void;
+  planos: Plano[];
+  onEditPlano?: (plano: Plano) => void;
 }
 
-const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack }) => {
-  const [planos, setPlanos] = useState<Plano[]>([]);
-  const [showForm, setShowForm] = useState(false);
-  const [novoPlano, setNovoPlano] = useState({ nome: '', descricao: '', data: new Date() });
+const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack, planos, onEditPlano }) => {
   const { width } = useWindowDimensions();
-  // Estado para mostrar o formulário de novo plano
-  const [showPlanoForm, setShowPlanoForm] = useState(false);
   const [editandoPlano, setEditandoPlano] = useState<Plano | null>(null);
-
-  // Função para adicionar novo plano
-  const adicionarPlano = () => {
-    if (!novoPlano.nome.trim()) return;
-    setPlanos([
-      ...planos,
-      { id: Date.now(), ...novoPlano },
-    ]);
-    setNovoPlano({ nome: '', descricao: '', data: new Date() });
-    setShowPlanoForm(false);
-  };
 
   if (!meta) return null;
 
   return (
     <View className="flex-1" style={{ backgroundColor: 'white', minHeight: '100%' }}>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 120 }}
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 2, paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header com botão de voltar */}
@@ -366,7 +354,7 @@ const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack }) => 
             <Text className="text-slate-500 text-center mt-8">Nenhum plano cadastrado.</Text>
           )}
           {planos.map((plano, idx) => (
-            <TouchableOpacity key={plano.id} onPress={() => setEditandoPlano(plano)}>
+            <TouchableOpacity key={plano.id} onPress={() => onEditPlano && onEditPlano(plano)}>
               <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100">
                 <Text className="text-base font-medium text-slate-900 mb-1">{plano.nome}</Text>
                 <Text className="text-sm text-slate-600 mb-1">{plano.descricao}</Text>
@@ -375,128 +363,44 @@ const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack }) => 
             </TouchableOpacity>
           ))}
           {/* Formulário para novo plano */}
-          {showForm && (
-            <View className="bg-white p-4 rounded-xl border border-gray-200 mt-4">
-              <Text className="text-base font-semibold mb-2">Nome do Plano *</Text>
-              <TextInput
-                className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
-                placeholder="Nome do plano"
-                value={novoPlano.nome}
-                onChangeText={text => setNovoPlano({ ...novoPlano, nome: text })}
-              />
-              <Text className="text-base font-semibold mb-2">Descrição</Text>
-              <TextInput
-                className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
-                placeholder="Descrição do plano"
-                value={novoPlano.descricao}
-                onChangeText={text => setNovoPlano({ ...novoPlano, descricao: text })}
-                multiline
-              />
-              <Text className="text-base font-semibold mb-2">Data</Text>
-              <TouchableOpacity onPress={() => {}} className="border border-gray-200 rounded-lg px-3 py-2 mb-4">
-                <Text className="text-slate-700">{novoPlano.data.toLocaleDateString('pt-BR')}</Text>
-              </TouchableOpacity>
-              <View className="flex-row justify-end space-x-2 mt-2">
-                <TouchableOpacity onPress={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-gray-200">
-                  <Text>Cancelar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={adicionarPlano} className="px-4 py-2 rounded-lg bg-teal-500" disabled={!novoPlano.nome.trim()}>
-                  <Text className="text-white">Salvar</Text>
-                </TouchableOpacity>
+          {/* Removido formulário de novo plano */}
+          {/* Overlay/modal permanece fora do ScrollView */}
+          {(editandoPlano) && (
+            <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
+              <View style={{ backgroundColor: 'white', borderRadius: 16, width: '100%', maxWidth: 480, maxHeight: '90%', padding: 0, overflow: 'hidden' }}>
+                <ScrollView contentContainerStyle={{ padding: 24 }}>
+                  <Text className="text-lg font-semibold mb-3">{editandoPlano ? 'Editar Plano' : 'Novo Plano'}</Text>
+                  <PlanoForm
+                    plano={editandoPlano}
+                    onSalvar={plano => {
+                      if (editandoPlano) {
+                        onEditPlano?.(plano);
+                        setEditandoPlano(null);
+                      } else {
+                        // This part of the logic needs to be handled by the parent component
+                        // For now, it will just close the form if it's a new plan
+                        setEditandoPlano(null);
+                      }
+                    }}
+                    onCancelar={() => {
+                      setEditandoPlano(null);
+                    }}
+                    onExcluir={editandoPlano ? () => {
+                      onEditPlano?.(editandoPlano);
+                      setEditandoPlano(null);
+                    } : undefined}
+                  />
+                </ScrollView>
               </View>
             </View>
           )}
         </View>
       </ScrollView>
       {/* Botão flutuante para adicionar plano */}
-      <View
-        pointerEvents="box-none"
-        style={{
-          position: 'absolute',
-          right: 24,
-          bottom: 32,
-          zIndex: 20,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => setShowPlanoForm(true)}
-          style={{
-            backgroundColor: '#14b8a6',
-            borderRadius: 32,
-            padding: 16,
-            elevation: 4,
-            shadowColor: '#000',
-            shadowOpacity: 0.12,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 2 },
-          }}
-          className="items-center justify-center"
-        >
-          <Icon name="add" size={28} color="#fff" />
-        </TouchableOpacity>
-      </View>
+      {/* Removido botão flutuante de adicionar plano */}
       {/* Modal para novo plano */}
-      {showPlanoForm && (
-        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
-          <View className="bg-white p-6 rounded-xl w-11/12 max-w-md">
-            <Text className="text-lg font-semibold mb-3">Novo Plano</Text>
-            <TextInput
-              className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
-              placeholder="Nome do plano"
-              value={novoPlano.nome}
-              onChangeText={text => setNovoPlano({ ...novoPlano, nome: text })}
-            />
-            <TextInput
-              className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
-              placeholder="Descrição do plano"
-              value={novoPlano.descricao}
-              onChangeText={text => setNovoPlano({ ...novoPlano, descricao: text })}
-              multiline
-            />
-            <TouchableOpacity onPress={() => {}} className="border border-gray-200 rounded-lg px-3 py-2 mb-4">
-              <Text className="text-slate-700">{novoPlano.data.toLocaleDateString('pt-BR')}</Text>
-            </TouchableOpacity>
-            <View className="flex-row justify-end space-x-2 mt-2">
-              <TouchableOpacity onPress={() => setShowPlanoForm(false)} className="px-4 py-2 rounded-lg bg-gray-200">
-                <Text>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={adicionarPlano} className="px-4 py-2 rounded-lg bg-teal-500" disabled={!novoPlano.nome.trim()}>
-                <Text className="text-white">Salvar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      )}
+      {/* Removido modal de novo plano */}
       {/* Overlay/modal permanece fora do ScrollView */}
-      {(showPlanoForm || editandoPlano) && (
-        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
-          <View style={{ backgroundColor: 'white', borderRadius: 16, width: '100%', maxWidth: 480, maxHeight: '90%', padding: 0, overflow: 'hidden' }}>
-            <ScrollView contentContainerStyle={{ padding: 24 }}>
-              <Text className="text-lg font-semibold mb-3">{editandoPlano ? 'Editar Plano' : 'Novo Plano'}</Text>
-              <PlanoForm
-                {...(editandoPlano ? { plano: editandoPlano } : {})}
-                onSalvar={plano => {
-                  if (editandoPlano) {
-                    setPlanos(planos.map(p => p.id === editandoPlano.id ? { ...plano, id: editandoPlano.id } : p));
-                    setEditandoPlano(null);
-                  } else {
-                    setPlanos([...planos, { id: Date.now(), ...plano }]);
-                    setShowPlanoForm(false);
-                  }
-                }}
-                onCancelar={() => {
-                  setShowPlanoForm(false);
-                  setEditandoPlano(null);
-                }}
-                onExcluir={editandoPlano ? () => {
-                  setPlanos(planos.filter(p => p.id !== editandoPlano.id));
-                  setEditandoPlano(null);
-                } : undefined}
-              />
-            </ScrollView>
-          </View>
-        </View>
-      )}
     </View>
   );
 };

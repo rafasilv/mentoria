@@ -6,7 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import NovaMetaForm from './NovaMetaForm';
 import MentoradoMetasList, { Meta } from './MentoradoMetasList';
 import SectionDropdown from '../../components/SectionDropdown';
-import MetaDetailScreen from './MetaDetailScreen';
+import MetaDetailScreen, { PlanoForm, Plano } from './MetaDetailScreen'; // Corrigida a importação nomeada
 
 // Mock para metas com dataConclusao
 const metasMock = [
@@ -65,6 +65,12 @@ const MentoradoDetailScreen = () => {
   const [activeSection, setActiveSection] = useState('info');
   const { width } = useWindowDimensions();
   const [metaSelecionada, setMetaSelecionada] = useState<Meta | null>(null);
+  // Estado para controle do modal de novo plano
+  const [showPlanoForm, setShowPlanoForm] = useState(false);
+  // Estado local para planos (mock)
+  const [planos, setPlanos] = useState<Plano[]>([]);
+  // Estado para edição de plano
+  const [planoEditando, setPlanoEditando] = useState<Plano | null>(null);
 
   // Definição das seções disponíveis
   const sections = [
@@ -234,7 +240,15 @@ const MentoradoDetailScreen = () => {
         {activeSection === 'planosMetas' && (
           metaSelecionada ? (
             <View style={{ flex: 1 }}>
-              <MetaDetailScreen meta={metaSelecionada} onBack={() => setMetaSelecionada(null)} />
+              <MetaDetailScreen
+                meta={metaSelecionada}
+                onBack={() => setMetaSelecionada(null)}
+                planos={planos}
+                onEditPlano={plano => {
+                  setPlanoEditando(plano);
+                  setShowPlanoForm(true);
+                }}
+              />
             </View>
           ) : (
             <MentoradoMetasList mentorado={mentorado} metas={metas} onMetaPress={setMetaSelecionada} />
@@ -318,6 +332,70 @@ const MentoradoDetailScreen = () => {
             </View>
           )}
         </>
+      )}
+      {/* Botão flutuante para adicionar plano - só aparece no detalhe da meta */}
+      {activeSection === 'planosMetas' && metaSelecionada && (
+        <View
+          pointerEvents="box-none"
+          style={{
+            position: 'absolute',
+            right: 24,
+            bottom: 32,
+            zIndex: 20,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              setPlanoEditando(null);
+              setShowPlanoForm(true);
+            }}
+            style={{
+              backgroundColor: '#14b8a6',
+              borderRadius: 32,
+              padding: 16,
+              elevation: 4,
+              shadowColor: '#000',
+              shadowOpacity: 0.12,
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 2 },
+            }}
+            className="items-center justify-center"
+          >
+            <Icon name="add" size={28} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      )}
+      {/* Modal para novo plano */}
+      {(showPlanoForm || planoEditando) && (
+        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
+          <View style={{ backgroundColor: 'white', borderRadius: 16, width: '100%', maxWidth: 480, maxHeight: '90%', padding: 0, overflow: 'hidden' }}>
+            <ScrollView contentContainerStyle={{ padding: 24 }}>
+              <Text className="text-lg font-semibold mb-3">{planoEditando ? 'Editar Plano' : 'Novo Plano'}</Text>
+              <PlanoForm
+                plano={planoEditando || undefined}
+                onSalvar={(plano: Plano) => {
+                  if (planoEditando) {
+                    setPlanos(planos.map(p => p.id === planoEditando.id ? { ...planoEditando, ...plano } : p));
+                  } else {
+                    const { id, ...rest } = plano;
+                    setPlanos([...planos, { id: Date.now(), ...rest }]);
+                  }
+                  setShowPlanoForm(false);
+                  setPlanoEditando(null);
+                }}
+                onCancelar={() => {
+                  setShowPlanoForm(false);
+                  setPlanoEditando(null);
+                }}
+                onExcluir={planoEditando ? () => {
+                  setPlanos(planos.filter(p => p.id !== planoEditando.id));
+                  setShowPlanoForm(false);
+                  setPlanoEditando(null);
+                } : undefined}
+              />
+            </ScrollView>
+          </View>
+        </View>
       )}
     </View>
   );
