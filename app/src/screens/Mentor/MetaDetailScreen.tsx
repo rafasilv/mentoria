@@ -6,6 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { ptBR } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Picker } from '@react-native-picker/picker';
 
 interface Plano {
   id: number;
@@ -144,25 +145,25 @@ const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plan
           )}
           <Text className="text-base font-semibold mb-2">Horário</Text>
           <View className="flex-row items-center mb-2">
-            <select
-              className="border border-gray-200 rounded-lg px-2 py-1 mr-2"
-              value={horarios[0].hora}
-              onChange={e => updateHorario(0, 'hora', Number(e.target.value))}
+            <Picker
+              selectedValue={horarios[0].hora}
+              style={{ height: 40, width: 100, marginRight: 8 }}
+              onValueChange={value => updateHorario(0, 'hora', value)}
             >
               {horasValidas.map(h => (
-                <option key={h} value={h}>{h.toString().padStart(2, '0')}</option>
+                <Picker.Item key={h} label={h.toString().padStart(2, '0')} value={h} />
               ))}
-            </select>
+            </Picker>
             <Text className="mx-1">:</Text>
-            <select
-              className="border border-gray-200 rounded-lg px-2 py-1"
-              value={horarios[0].minuto}
-              onChange={e => updateHorario(0, 'minuto', Number(e.target.value))}
+            <Picker
+              selectedValue={horarios[0].minuto}
+              style={{ height: 40, width: 100 }}
+              onValueChange={value => updateHorario(0, 'minuto', value)}
             >
               {minutosValidos.map(m => (
-                <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
+                <Picker.Item key={m} label={m.toString().padStart(2, '0')} value={m} />
               ))}
-            </select>
+            </Picker>
           </View>
         </>
       ) : (
@@ -241,25 +242,25 @@ const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plan
           <Text className="text-base font-semibold mb-2">Horários</Text>
           {horarios.map((h, idx) => (
             <View key={idx} className="flex-row items-center mb-2">
-              <select
-                className="border border-gray-200 rounded-lg px-2 py-1 mr-2"
-                value={h.hora}
-                onChange={e => updateHorario(idx, 'hora', Number(e.target.value))}
+              <Picker
+                selectedValue={h.hora}
+                style={{ height: 40, width: 100, marginRight: 8 }}
+                onValueChange={value => updateHorario(idx, 'hora', value)}
               >
                 {horasValidas.map(hh => (
-                  <option key={hh} value={hh}>{hh.toString().padStart(2, '0')}</option>
+                  <Picker.Item key={hh} label={hh.toString().padStart(2, '0')} value={hh} />
                 ))}
-              </select>
+              </Picker>
               <Text className="mx-1">:</Text>
-              <select
-                className="border border-gray-200 rounded-lg px-2 py-1"
-                value={h.minuto}
-                onChange={e => updateHorario(idx, 'minuto', Number(e.target.value))}
+              <Picker
+                selectedValue={h.minuto}
+                style={{ height: 40, width: 100 }}
+                onValueChange={value => updateHorario(idx, 'minuto', value)}
               >
                 {minutosValidos.map(m => (
-                  <option key={m} value={m}>{m.toString().padStart(2, '0')}</option>
+                  <Picker.Item key={m} label={m.toString().padStart(2, '0')} value={m} />
                 ))}
-              </select>
+              </Picker>
               {horarios.length > 1 && (
                 <TouchableOpacity onPress={() => removeHorario(idx)} className="ml-2 px-2 py-1 rounded-lg bg-red-100">
                   <Icon name="close" size={16} color="#dc2626" />
