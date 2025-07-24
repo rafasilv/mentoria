@@ -3,16 +3,21 @@ import { View, Text, TouchableOpacity, ScrollView, TextInput, useWindowDimension
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ptBR from 'date-fns/locale/pt-BR';
+import { ptBR } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ptBR as dateFnsPtBR } from 'date-fns/locale';
 
 interface Plano {
   id: number;
   nome: string;
   descricao: string;
   data: Date;
+  tipo?: string;
+  dias?: number[];
+  horarios?: { hora: number; minuto: number }[];
+  diasMes?: number[];
+  diasMesWeb?: string[];
+  dataMensal?: Date;
 }
 
 interface Meta {
@@ -45,7 +50,7 @@ const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plan
   const [frequencia, setFrequencia] = useState<'semanal' | 'quinzenal' | 'mensal'>('semanal');
   const [dias, setDias] = useState<number[]>(plano?.dias || []);
   const [horarios, setHorarios] = useState<{ hora: number; minuto: number }[]>(plano?.horarios || [{ hora: 8, minuto: 0 }]);
-  const [dataUnica, setDataUnica] = useState(plano?.data || new Date());
+  const [dataUnica, setDataUnica] = useState<Date>(plano?.data || new Date());
   const [quinzenalInicio, setQuinzenalInicio] = useState<'atual' | 'proxima'>('atual');
   const [showMinutePicker, setShowMinutePicker] = useState<{ idx: number; visible: boolean }>({ idx: 0, visible: false });
   const [diasMes, setDiasMes] = useState<number[]>(plano?.diasMes || []); // para mensal
@@ -112,7 +117,7 @@ const PlanoForm = ({ onSalvar, onCancelar, onExcluir, plano }: { onSalvar: (plan
           {Platform.OS === 'web' ? (
             <DatePicker
               selected={dataUnica}
-              onChange={date => setDataUnica(date)}
+              onChange={date => date && setDataUnica(date)}
               dateFormat="dd/MM/yyyy"
               locale={ptBR}
               minDate={new Date()}
@@ -329,75 +334,80 @@ const MetaDetailScreen = () => {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: 'white', flex: 1 }} className="flex-1">
-      {/* Header com botão de voltar */}
-      <View className="px-6 pt-8 pb-2 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3 p-2">
-          <Icon name="arrow-back" size={24} color="#0f766e" />
-        </TouchableOpacity>
-        <Text className="text-xl font-bold text-slate-900">Detalhe da Meta</Text>
-      </View>
-      {/* Detalhes da meta */}
-      <View className="bg-gray-50 p-6 rounded-xl border border-gray-100 mx-6 mt-4 mb-6">
-        <Text className="text-lg font-bold text-slate-900 mb-2">{meta.titulo}</Text>
-        <Text className="text-base text-slate-600 mb-4">{meta.descricao}</Text>
-        {meta.dataConclusao && (
-          <View className="flex-row items-center mb-2">
-            <Icon name="event" size={18} color="#64748b" style={{ marginRight: 6 }} />
-            <Text className="text-sm text-slate-700">Concluir até: {new Date(meta.dataConclusao).toLocaleDateString('pt-BR')}</Text>
-          </View>
-        )}
-      </View>
-      {/* Planos */}
-      <View className="px-6 mb-6">
-        <View className="flex-row items-center justify-between mb-2">
-          <Text className="text-lg font-semibold text-slate-900">Planos</Text>
-        </View>
-        {planos.length === 0 && (
-          <Text className="text-slate-500 text-center mt-8">Nenhum plano cadastrado.</Text>
-        )}
-        {planos.map((plano, idx) => (
-          <TouchableOpacity key={plano.id} onPress={() => setEditandoPlano(plano)}>
-            <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100">
-              <Text className="text-base font-medium text-slate-900 mb-1">{plano.nome}</Text>
-              <Text className="text-sm text-slate-600 mb-1">{plano.descricao}</Text>
-              <Text className="text-xs text-slate-500">Tipo: {plano.tipo || 'N/A'}</Text>
-            </View>
+    <View className="flex-1" style={{ backgroundColor: 'white', minHeight: '100%' }}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 120 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header com botão de voltar */}
+        <View className="px-6 pt-8 pb-2 flex-row items-center">
+          <TouchableOpacity onPress={() => navigation.goBack()} className="mr-3 p-2">
+            <Icon name="arrow-back" size={24} color="#0f766e" />
           </TouchableOpacity>
-        ))}
-        {/* Formulário para novo plano */}
-        {showForm && (
-          <View className="bg-white p-4 rounded-xl border border-gray-200 mt-4">
-            <Text className="text-base font-semibold mb-2">Nome do Plano *</Text>
-            <TextInput
-              className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
-              placeholder="Nome do plano"
-              value={novoPlano.nome}
-              onChangeText={text => setNovoPlano({ ...novoPlano, nome: text })}
-            />
-            <Text className="text-base font-semibold mb-2">Descrição</Text>
-            <TextInput
-              className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
-              placeholder="Descrição do plano"
-              value={novoPlano.descricao}
-              onChangeText={text => setNovoPlano({ ...novoPlano, descricao: text })}
-              multiline
-            />
-            <Text className="text-base font-semibold mb-2">Data</Text>
-            <TouchableOpacity onPress={() => {}} className="border border-gray-200 rounded-lg px-3 py-2 mb-4">
-              <Text className="text-slate-700">{novoPlano.data.toLocaleDateString('pt-BR')}</Text>
-            </TouchableOpacity>
-            <View className="flex-row justify-end space-x-2 mt-2">
-              <TouchableOpacity onPress={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-gray-200">
-                <Text>Cancelar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={adicionarPlano} className="px-4 py-2 rounded-lg bg-teal-500" disabled={!novoPlano.nome.trim()}>
-                <Text className="text-white">Salvar</Text>
-              </TouchableOpacity>
+          <Text className="text-xl font-bold text-slate-900">Detalhe da Meta</Text>
+        </View>
+        {/* Detalhes da meta */}
+        <View className="bg-gray-50 p-6 rounded-xl border border-gray-100 mx-6 mt-4 mb-6">
+          <Text className="text-lg font-bold text-slate-900 mb-2">{meta.titulo}</Text>
+          <Text className="text-base text-slate-600 mb-4">{meta.descricao}</Text>
+          {meta.dataConclusao && (
+            <View className="flex-row items-center mb-2">
+              <Icon name="event" size={18} color="#64748b" style={{ marginRight: 6 }} />
+              <Text className="text-sm text-slate-700">Concluir até: {new Date(meta.dataConclusao).toLocaleDateString('pt-BR')}</Text>
             </View>
+          )}
+        </View>
+        {/* Planos */}
+        <View className="px-6 mb-6">
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-lg font-semibold text-slate-900">Planos</Text>
           </View>
-        )}
-      </View>
+          {planos.length === 0 && (
+            <Text className="text-slate-500 text-center mt-8">Nenhum plano cadastrado.</Text>
+          )}
+          {planos.map((plano, idx) => (
+            <TouchableOpacity key={plano.id} onPress={() => setEditandoPlano(plano)}>
+              <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100">
+                <Text className="text-base font-medium text-slate-900 mb-1">{plano.nome}</Text>
+                <Text className="text-sm text-slate-600 mb-1">{plano.descricao}</Text>
+                <Text className="text-xs text-slate-500">Tipo: {plano.tipo || 'N/A'}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+          {/* Formulário para novo plano */}
+          {showForm && (
+            <View className="bg-white p-4 rounded-xl border border-gray-200 mt-4">
+              <Text className="text-base font-semibold mb-2">Nome do Plano *</Text>
+              <TextInput
+                className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
+                placeholder="Nome do plano"
+                value={novoPlano.nome}
+                onChangeText={text => setNovoPlano({ ...novoPlano, nome: text })}
+              />
+              <Text className="text-base font-semibold mb-2">Descrição</Text>
+              <TextInput
+                className="border border-gray-200 rounded-lg px-3 py-2 mb-2"
+                placeholder="Descrição do plano"
+                value={novoPlano.descricao}
+                onChangeText={text => setNovoPlano({ ...novoPlano, descricao: text })}
+                multiline
+              />
+              <Text className="text-base font-semibold mb-2">Data</Text>
+              <TouchableOpacity onPress={() => {}} className="border border-gray-200 rounded-lg px-3 py-2 mb-4">
+                <Text className="text-slate-700">{novoPlano.data.toLocaleDateString('pt-BR')}</Text>
+              </TouchableOpacity>
+              <View className="flex-row justify-end space-x-2 mt-2">
+                <TouchableOpacity onPress={() => setShowForm(false)} className="px-4 py-2 rounded-lg bg-gray-200">
+                  <Text>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={adicionarPlano} className="px-4 py-2 rounded-lg bg-teal-500" disabled={!novoPlano.nome.trim()}>
+                  <Text className="text-white">Salvar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </View>
+      </ScrollView>
       {/* Botão flutuante para adicionar plano */}
       <View
         pointerEvents="box-none"
@@ -425,7 +435,7 @@ const MetaDetailScreen = () => {
           <Icon name="add" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
-      {/* Overlay do formulário de plano (adicionar ou editar) */}
+      {/* Overlay/modal permanece fora do ScrollView */}
       {(showPlanoForm || editandoPlano) && (
         <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, zIndex: 30 }} className="flex-1 justify-center items-center bg-black/30">
           <View style={{ backgroundColor: 'white', borderRadius: 16, width: '100%', maxWidth: 480, maxHeight: '90%', padding: 0, overflow: 'hidden' }}>
@@ -455,7 +465,7 @@ const MetaDetailScreen = () => {
           </View>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 

@@ -231,7 +231,7 @@ const MentoradoDetailScreen = () => {
           </View>
         )}
         {activeSection === 'planosMetas' && (
-          <View style={{ flex: 1, minHeight: 300 }}>
+          <View style={{ flex: 1 }}>
             <MentoradoMetasStack route={{ params: { mentorado, metas } }} />
           </View>
         )}
