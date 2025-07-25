@@ -125,7 +125,7 @@ const MentoradosScreen = () => {
         // @ts-ignore
         <div className="fixed inset-0 z-30 flex justify-center items-center bg-black/30">
           {/* @ts-ignore */}
-          <div className="bg-white rounded-xl w-11/12 max-w-md shadow-xl flex flex-col items-stretch p-8" style={{ minWidth: 320 }}>
+          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col items-stretch p-10" style={{ minWidth: 320, maxHeight: '90vh', overflowY: 'auto' }}>
             <Text className="text-xl font-bold text-center mb-6 text-slate-900">Novo Mentorado</Text>
             <View className="mb-4">
               <Text className="text-base font-medium mb-1 text-slate-700">Nome completo *</Text>
@@ -221,20 +221,30 @@ const MentoradosScreen = () => {
           animationType="fade"
           onRequestClose={() => setModalVisible(false)}
         >
-          <Pressable style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)' }} onPress={() => setModalVisible(false)}>
-            <View className="flex-1 justify-end">
-              <Pressable style={{ backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, minHeight: 340 }} onPress={() => {}}>
-                <Text className="text-lg font-semibold text-slate-900 mb-4">Novo Mentorado</Text>
-                <Text className="text-slate-700 mb-1">Nome completo</Text>
+          <View style={{ flex: 1 }}>
+            {/* Overlay escura */}
+            <Pressable style={{ position: 'absolute', top: 80, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.18)', zIndex: 1 }} onPress={() => setModalVisible(false)} />
+            {/* Modal principal moderno ocupando todo espaço */}
+            <View style={{ position: 'absolute', top: 80, left: 0, right: 0, bottom: 0, backgroundColor: 'white', borderTopLeftRadius: 0, borderTopRightRadius: 0, paddingHorizontal: 0, zIndex: 2, overflow: 'hidden' }}>
+              {/* Header do modal */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', paddingHorizontal: 24, paddingTop: 24, paddingBottom: 12, borderBottomWidth: 1, borderColor: '#e5e7eb', backgroundColor: 'white' }}>
+                <TouchableOpacity onPress={() => setModalVisible(false)} style={{ padding: 6, borderRadius: 20, backgroundColor: '#f1f5f9', marginRight: 8 }}>
+                  <Icon name="arrow-back" size={24} color="#0f766e" />
+                </TouchableOpacity>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: '#0f172a' }}>Novo Mentorado</Text>
+              </View>
+              {/* Conteúdo do modal */}
+              <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 12, paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
+                <Text className="text-slate-700 mb-1 mt-2">Nome completo</Text>
                 <TextInput
-                  className="border border-gray-200 rounded-lg px-3 py-2 mb-3 text-slate-900"
+                  className="border border-gray-200 rounded-xl px-3 py-3 mb-4 text-slate-900 text-base"
                   placeholder="Digite o nome completo"
                   value={novoMentorado.nome}
                   onChangeText={text => setNovoMentorado({ ...novoMentorado, nome: text })}
                 />
                 <Text className="text-slate-700 mb-1">Email</Text>
                 <TextInput
-                  className="border border-gray-200 rounded-lg px-3 py-2 mb-3 text-slate-900"
+                  className="border border-gray-200 rounded-xl px-3 py-3 mb-4 text-slate-900 text-base"
                   placeholder="Digite o email"
                   keyboardType="email-address"
                   autoCapitalize="none"
@@ -243,7 +253,7 @@ const MentoradosScreen = () => {
                 />
                 <Text className="text-slate-700 mb-1">Telefone</Text>
                 <TextInput
-                  className="border border-gray-200 rounded-lg px-3 py-2 mb-3 text-slate-900"
+                  className="border border-gray-200 rounded-xl px-3 py-3 mb-2 text-slate-900 text-base"
                   placeholder="Digite o telefone"
                   keyboardType="phone-pad"
                   value={novoMentorado.telefone}
@@ -254,11 +264,11 @@ const MentoradosScreen = () => {
                   maxLength={15}
                 />
                 {!telefoneValido && (
-                  <Text className="text-red-500 text-xs mb-1">Telefone inválido</Text>
+                  <Text className="text-red-500 text-xs mb-2">Telefone inválido</Text>
                 )}
-                <View className="flex-row justify-end space-x-2 mt-2">
-                  <TouchableOpacity onPress={() => setModalVisible(false)} className="px-4 py-2 rounded-lg bg-gray-100">
-                    <Text className="text-slate-700 font-medium">Cancelar</Text>
+                <View className="flex-row justify-end space-x-2 mt-6">
+                  <TouchableOpacity onPress={() => setModalVisible(false)} className="px-5 py-3 rounded-xl bg-gray-100">
+                    <Text className="text-slate-700 font-medium text-base">Cancelar</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => {
@@ -280,15 +290,15 @@ const MentoradosScreen = () => {
                       setTelefoneValido(true);
                       Alert.alert('Mentorado cadastrado!', 'O mentorado foi cadastrado como inativo. Ele deve validar o e-mail para ativar a conta.');
                     }}
-                    className={`px-4 py-2 rounded-lg ${camposPreenchidos && telefoneValido ? 'bg-teal-600' : 'bg-teal-300'}`}
+                    className={`px-5 py-3 rounded-xl ${camposPreenchidos && telefoneValido ? 'bg-teal-600' : 'bg-teal-300'}`}
                     disabled={!(camposPreenchidos && telefoneValido)}
                   >
-                    <Text className="text-white font-medium">Salvar</Text>
+                    <Text className="text-white font-semibold text-base">Salvar</Text>
                   </TouchableOpacity>
                 </View>
-              </Pressable>
+              </ScrollView>
             </View>
-          </Pressable>
+          </View>
         </Modal>
       )}
       <ScrollView style={{ backgroundColor: 'white', flex: 1 }} className="flex-1">

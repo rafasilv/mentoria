@@ -6,7 +6,7 @@ import EstatisticasScreen from '../screens/Mentor/EstatisticasScreen';
 import ExampleScreen from '../screens/ExampleScreen';
 import MentoradoDetailScreen from '../screens/Mentor/MentoradoDetailScreen';
 import MetaDetailScreen from '../screens/Mentor/MetaDetailScreen';
-import PerfilMentorScreen from '../screens/Mentor/PerfilMentorScreen';
+import EditarPerfilScreen from '../screens/Mentor/EditarPerfilScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,7 +19,7 @@ const MentorStack = () => {
       <Stack.Screen name="Example" component={ExampleScreen} />
       <Stack.Screen name="MentoradoDetail" component={MentoradoDetailScreen} />
       <Stack.Screen name="MetaDetail" component={MetaDetailScreen} />
-      <Stack.Screen name="PerfilMentor" component={PerfilMentorScreen} />
+      <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} />
     </Stack.Navigator>
   );
 };

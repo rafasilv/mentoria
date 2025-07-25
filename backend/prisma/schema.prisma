@@ -21,6 +21,7 @@ model User {
   notificacoes_ativas Boolean @default(true)
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
+  foto               String?  // Caminho da imagem de perfil
 
   // Relacionamentos
   mentor             User?    @relation("MentorMentorado", fields: [mentor_id], references: [id])

@@ -8,6 +8,8 @@ import { View, Text, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MentorLayout from '../components/MentorLayout';
 import { useNavigation } from '@react-navigation/native';
+import EditarPerfilScreen from '../screens/Mentor/EditarPerfilScreen';
+import TrocarSenhaScreen from '../screens/Mentor/TrocarSenhaScreen';
 
 // Tela de exemplo para Agenda
 const AgendaScreen = () => (
@@ -95,6 +97,22 @@ const MentorTabs = () => {
         <Tab.Screen name="Agenda" component={AgendaScreen} />
         <Tab.Screen name="Mentorados" component={MentoradosStack} />
         <Tab.Screen name="Estatísticas" component={EstatisticasScreen} />
+        <Tab.Screen
+          name="EditarPerfil"
+          component={EditarPerfilScreen}
+          options={{
+            tabBarButton: () => null,
+            tabBarStyle: { display: 'none' }, // Esconde a barra quando estiver nessa tela
+          }}
+        />
+        <Tab.Screen
+          name="TrocarSenha"
+          component={TrocarSenhaScreen}
+          options={{
+            tabBarButton: () => null,
+            tabBarStyle: { display: 'none' },
+          }}
+        />
       </Tab.Navigator>
     </MentorLayout>
   );

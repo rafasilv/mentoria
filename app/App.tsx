@@ -18,7 +18,7 @@ export default function App() {
         <NavigationContainer>
           <AppNavigator />
         </NavigationContainer>
-        <StatusBar style="auto" />
+        {/* <StatusBar style="auto" /> Removido para evitar conflito */}
       </AuthProvider>
     </GestureHandlerRootView>
   );

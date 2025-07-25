@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import MentorHeader from './MentorHeader';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
 interface MentorLayoutProps {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ const MentorLayout: React.FC<MentorLayoutProps> = ({
 }) => {
   const { handleLogout } = useAuth();
   const insets = useSafeAreaInsets();
+  const navigation: any = useNavigation();
 
   const containerClass = Platform.OS === 'web' ? 'layout-container' : 'flex-1';
   const contentClass = Platform.OS === 'web' ? 'layout-content' : 'flex-1';
@@ -37,10 +39,18 @@ const MentorLayout: React.FC<MentorLayoutProps> = ({
     handleLogout();
   };
 
+  const handleProfile = () => {
+    navigation.navigate('EditarPerfil');
+  };
+
+  const handleChangePassword = () => {
+    navigation.navigate('TrocarSenha');
+  };
+
   return (
     <>
       {/* StatusBar realmente translúcida */}
-      <StatusBar translucent backgroundColor="transparent" style="dark" />
+      <StatusBar translucent backgroundColor={headerColor} style="dark" />
       {/* View colorida para status bar (primeira coisa do layout) */}
       {Platform.OS !== 'web' && insets.top > 0 && (
         <View style={{ height: insets.top, backgroundColor: headerColor }} />
@@ -51,8 +61,8 @@ const MentorLayout: React.FC<MentorLayoutProps> = ({
           <MentorHeader
             onLogout={handleLogoutPress}
             onNotifications={onNotifications}
-            onProfile={onProfile}
-            onChangePassword={onChangePassword}
+            onProfile={handleProfile}
+            onChangePassword={handleChangePassword}
             headerColor={headerColor}
           />
         </View>

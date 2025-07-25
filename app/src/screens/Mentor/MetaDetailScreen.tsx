@@ -324,7 +324,7 @@ const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack, plano
   return (
     <View className="flex-1" style={{ backgroundColor: 'white', minHeight: '100%' }}>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 2, paddingBottom: 120 }}
+        contentContainerStyle={{ paddingHorizontal: 0, paddingTop: 2, paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header com botão de voltar */}
@@ -335,7 +335,7 @@ const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack, plano
           <Text className="text-xl font-bold text-slate-900">Detalhe da Meta</Text>
         </View>
         {/* Detalhes da meta */}
-        <View className="bg-gray-50 p-6 rounded-xl border border-gray-100 mx-6 mt-4 mb-6">
+        <View className="bg-gray-50 p-6 rounded-xl border border-gray-100 mt-4 mb-6 mx-6">
           <Text className="text-lg font-bold text-slate-900 mb-2">{meta.titulo}</Text>
           <Text className="text-base text-slate-600 mb-4">{meta.descricao}</Text>
           {meta.dataConclusao && (
@@ -351,11 +351,11 @@ const MetaDetailScreen: React.FC<MetaDetailScreenProps> = ({ meta, onBack, plano
             <Text className="text-lg font-semibold text-slate-900">Planos</Text>
           </View>
           {planos.length === 0 && (
-            <Text className="text-slate-500 text-center mt-8">Nenhum plano cadastrado.</Text>
+            <Text className="text-slate-500 text-left mt-8">Nenhum plano cadastrado.</Text>
           )}
           {planos.map((plano, idx) => (
             <TouchableOpacity key={plano.id} onPress={() => onEditPlano && onEditPlano(plano)}>
-              <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100">
+              <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100" style={{ paddingLeft: 0, paddingRight: 0 }}>
                 <Text className="text-base font-medium text-slate-900 mb-1">{plano.nome}</Text>
                 <Text className="text-sm text-slate-600 mb-1">{plano.descricao}</Text>
                 <Text className="text-xs text-slate-500">Tipo: {plano.tipo || 'N/A'}</Text>

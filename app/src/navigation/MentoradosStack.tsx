@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 
 const MentoradosStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="Mentorados" component={MentoradosScreen} />
+    <Stack.Screen name="MentoradosList" component={MentoradosScreen} />
     <Stack.Screen name="MentoradoDetail" component={MentoradoDetailScreen} />
     <Stack.Screen name="MentoradoMetasList" component={MentoradoMetasList} />
     <Stack.Screen name="MetaDetail" component={MetaDetailScreen} />

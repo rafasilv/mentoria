@@ -39,13 +39,13 @@ app.get('/healthcheck', (req, res) => {
 });
 
 // Rotas
-app.use('/auth', authRoutes);
-app.use('/users', userRoutes);
-app.use('/goals', goalRoutes);
-app.use('/plans', planRoutes);
-app.use('/interactions', interactionRoutes);
-app.use('/performance', performanceRoutes);
-app.use('/notifications', notificationRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/goals', goalRoutes);
+app.use('/api/plans', planRoutes);
+app.use('/api/interactions', interactionRoutes);
+app.use('/api/performance', performanceRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Error handling
 app.use(errorHandler);

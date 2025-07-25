@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
@@ -91,8 +92,65 @@ const getMentor = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    console.log('req.body:', req.body);
+    console.log('req.file:', req.file);
+    const { nome } = req.body;
+    let fotoUrl = undefined;
+    if (req.file) {
+      // Caminho relativo para servir a imagem depois
+      fotoUrl = `/uploads/${req.file.filename}`;
+    }
+    const dataToUpdate = { nome };
+    if (fotoUrl) dataToUpdate.foto = fotoUrl;
+
+    const user = await prisma.user.update({
+      where: { id: req.user.id },
+      data: dataToUpdate,
+      select: {
+        id: true,
+        nome: true,
+        email: true,
+        tipo_usuario: true,
+        foto: true
+      }
+    });
+    console.log('Usuário atualizado:', user);
+    res.json(user);
+  } catch (error) {
+    console.error('Erro ao atualizar perfil:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { senhaAtual, novaSenha } = req.body;
+    if (!senhaAtual || !novaSenha) {
+      return res.status(400).json({ error: 'Preencha todos os campos.' });
+    }
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+    const senhaCorreta = await bcrypt.compare(senhaAtual, user.senha_hash);
+    if (!senhaCorreta) {
+      return res.status(401).json({ error: 'Senha atual incorreta.' });
+    }
+    const novaSenhaHash = await bcrypt.hash(novaSenha, 10);
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { senha_hash: novaSenhaHash }
+    });
+    res.json({ message: 'Senha alterada com sucesso.' });
+  } catch (error) {
+    console.error('Erro ao trocar senha:', error);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+};
+
 module.exports = {
   getMe,
   getMentorados,
-  getMentor
+  getMentor,
+  updateProfile,
+  changePassword
 }; 

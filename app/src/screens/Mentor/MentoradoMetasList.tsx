@@ -78,37 +78,33 @@ const MentoradoMetasList: React.FC<MentoradoMetasListProps> = ({ mentorado, meta
             hoje.setHours(0,0,0,0);
           }
           const atrasada = data && data <= hoje;
+          // MOCK: quantidade de planos (substitua por meta.planos.length se existir)
+          const quantidadePlanos = (meta as any).planos ? (meta as any).planos.length : Math.floor(Math.random() * 4); // 0 a 3 planos
           return (
             <TouchableOpacity
               key={meta.id}
               activeOpacity={0.85}
               onPress={() => onMetaPress ? onMetaPress(meta) : null}
             >
-              <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100" style={{ position: 'relative', paddingRight: 90 }}>
-                {data && (
-                  <View
-                    className={`flex-row items-center`}
-                    style={{
-                      position: 'absolute',
-                      top: 10,
-                      right: 10,
-                      backgroundColor: atrasada ? '#fef3c7' : '#f3f4f6',
-                      borderRadius: 8,
-                      paddingHorizontal: 6,
-                      paddingVertical: 2,
-                      minHeight: 22,
-                    }}
-                  >
-                    {atrasada && (
-                      <Icon name="error-outline" size={12} color="#f59e42" style={{ marginRight: 2 }} />
-                    )}
-                    <Text style={{ fontSize: 11, color: atrasada ? '#b45309' : '#64748b', fontWeight: '500' }}>
-                      Até {data.toLocaleDateString('pt-BR')}
-                    </Text>
-                  </View>
-                )}
+              <View className="bg-gray-50 p-4 rounded-xl mb-3 border border-gray-100" style={{ position: 'relative', paddingRight: 0 }}>
+                {/* Badge de número de planos no canto superior direito */}
+                <View style={{ position: 'absolute', top: 10, right: 10, backgroundColor: '#e0f2fe', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3, flexDirection: 'row', alignItems: 'center', zIndex: 10 }}>
+                  <Icon name="layers" size={13} color="#0ea5e9" style={{ marginRight: 3 }} />
+                  <Text style={{ fontSize: 11, color: '#0369a1', fontWeight: '500' }}>{quantidadePlanos} plano{quantidadePlanos === 1 ? '' : 's'}</Text>
+                </View>
                 <Text className="text-base font-medium text-slate-900 mb-1">{meta.titulo}</Text>
                 <Text className="text-sm text-slate-600 mb-1">{meta.descricao}</Text>
+                {/* Rodapé do card */}
+                <View className="flex-row items-center mt-3 pt-2 border-t border-gray-100">
+                  {data && (
+                    <View style={{ backgroundColor: atrasada ? '#fef3c7' : '#f3f4f6', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2, minHeight: 22, flexDirection: 'row', alignItems: 'center' }}>
+                      {atrasada && <Icon name="error-outline" size={12} color="#f59e42" style={{ marginRight: 2 }} />}
+                      <Text style={{ fontSize: 11, color: atrasada ? '#b45309' : '#64748b', fontWeight: '500' }}>
+                        Até {data.toLocaleDateString('pt-BR')}
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
             </TouchableOpacity>
           );
