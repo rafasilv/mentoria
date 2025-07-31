@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import MentorDashboardScreen from '../screens/Mentor/DashboardScreen';
+import FeedScreen from '../screens/Mentor/FeedScreen';
 import MentoradosStack from '../navigation/MentoradosStack';
 import EstatisticasScreen from '../screens/Mentor/EstatisticasScreen';
 import { View, Text, Platform } from 'react-native';
@@ -11,13 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import EditarPerfilScreen from '../screens/Mentor/EditarPerfilScreen';
 import TrocarSenhaScreen from '../screens/Mentor/TrocarSenhaScreen';
 
-// Tela de exemplo para Agenda
-const AgendaScreen = () => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text style={{ fontSize: 20, color: '#0f766e' }}>Agenda do Mentor</Text>
-    <Text style={{ color: '#64748b', marginTop: 8 }}>Aqui você verá seus compromissos, reuniões e eventos.</Text>
-  </View>
-);
+
 
 const Tab = createBottomTabNavigator();
 
@@ -62,11 +56,8 @@ const MentorTabs = () => {
           tabBarIcon: ({ color, size, focused }) => {
             let iconName = '';
             switch (route.name) {
-              case 'To-do':
-                iconName = 'checklist';
-                break;
-              case 'Agenda':
-                iconName = 'event';
+              case 'Feed':
+                iconName = 'rss-feed';
                 break;
               case 'Mentorados':
                 iconName = 'people';
@@ -93,8 +84,7 @@ const MentorTabs = () => {
           },
         })}
       >
-        <Tab.Screen name="To-do" component={MentorDashboardScreen} />
-        <Tab.Screen name="Agenda" component={AgendaScreen} />
+        <Tab.Screen name="Feed" component={FeedScreen} />
         <Tab.Screen name="Mentorados" component={MentoradosStack} />
         <Tab.Screen name="Estatísticas" component={EstatisticasScreen} />
         <Tab.Screen
